@@ -692,7 +692,7 @@ export default function App() {
 
       <AuthErrorBanner />
 
-      <main className="max-w-6xl mx-auto px-10 py-12">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-6 sm:py-8 md:py-12">
         {isDataLoading ? (
           <div className="flex flex-col items-center justify-center py-48">
             <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mb-4" />

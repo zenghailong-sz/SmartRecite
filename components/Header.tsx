@@ -51,61 +51,62 @@ const Header: React.FC<HeaderProps> = ({
   }, [menuOpen]);
 
   return (
-    <nav className="w-full bg-white/80 backdrop-blur-xl border-b border-gray-200 px-10 py-5 flex justify-between items-center sticky top-0 z-50 shadow-sm">
-        <div className="flex items-center gap-6">
-            <button onClick={onOpenUnitMenu} className="flex items-center gap-4 bg-gray-50/50 hover:bg-white px-6 py-3 rounded-2xl border border-gray-200 transition-all group hover:shadow-lg hover:shadow-indigo-500/5">
-                <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-100 group-hover:scale-105 transition-transform"><BookOpen size={24} /></div>
-                <div className="text-left">
-                    <h1 className="text-xl font-black text-gray-900 leading-tight">{unitName || "请选择单元"}</h1>
-                    <p className="text-[10px] text-indigo-500 font-black tracking-widest uppercase mt-0.5">{stats.total} ITEMS LOADED</p>
+    <nav className="w-full bg-white/80 backdrop-blur-xl border-b border-gray-200 px-3 sm:px-6 md:px-10 py-3 sm:py-4 md:py-5 flex flex-wrap justify-between items-center gap-3 sm:gap-4 md:gap-0 sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center gap-2 sm:gap-4 md:gap-6 flex-1 min-w-0">
+            <button onClick={onOpenUnitMenu} className="flex items-center gap-2 sm:gap-3 md:gap-4 bg-gray-50/50 hover:bg-white px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-2xl border border-gray-200 transition-all group hover:shadow-lg hover:shadow-indigo-500/5 min-w-0">
+                <div className="bg-indigo-600 p-2 sm:p-2.5 rounded-xl text-white shadow-lg shadow-indigo-100 group-hover:scale-105 transition-transform shrink-0"><BookOpen className="w-5 h-5 sm:w-6 sm:h-6" /></div>
+                <div className="text-left min-w-0">
+                    <h1 className="text-sm sm:text-lg md:text-xl font-black text-gray-900 leading-tight truncate">{unitName || "请选择单元"}</h1>
+                    <p className="text-[9px] sm:text-[10px] text-indigo-500 font-black tracking-widest uppercase mt-0.5">{stats.total} ITEMS LOADED</p>
                 </div>
-                <ChevronDown size={18} className="text-gray-300 ml-4 group-hover:text-indigo-400 transition-colors" />
+                <ChevronDown size={18} className="text-gray-300 ml-1 sm:ml-2 md:ml-4 group-hover:text-indigo-400 transition-colors shrink-0" />
             </button>
-            
-            <div className="flex gap-2">
-                <button onClick={onOpenDashboard} className="p-3 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all" title="学习仪表盘">
-                    <BarChart3 size={24} />
+
+            <div className="flex gap-1 sm:gap-2 shrink-0">
+                <button onClick={onOpenDashboard} className="p-2 sm:p-3 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all" title="学习仪表盘">
+                    <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
-                <button onClick={onOpenGuide} className="p-3 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all" title="智能学习指南">
-                    <HelpCircle size={24} />
+                <button onClick={onOpenGuide} className="p-2 sm:p-3 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all" title="智能学习指南">
+                    <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
             </div>
         </div>
 
-        <div className="flex items-center gap-12">
+        <div className="flex items-center gap-3 md:gap-6 lg:gap-12 flex-wrap justify-end">
             <AnimatePresence>
                 {streak >= 3 && (
-                    <motion.div initial={{ scale: 0, x: 20, opacity: 0 }} animate={{ scale: 1, x: 0, opacity: 1 }} exit={{ scale: 0, opacity: 0 }} className="flex items-center gap-2 px-6 py-2 bg-orange-50 border border-orange-200 rounded-full text-orange-600 font-black shadow-sm">
-                        <Flame size={20} className="animate-bounce" />
-                        <span className="text-lg">{streak} COMBO!</span>
+                    <motion.div initial={{ scale: 0, x: 20, opacity: 0 }} animate={{ scale: 1, x: 0, opacity: 1 }} exit={{ scale: 0, opacity: 0 }} className="flex items-center gap-2 px-3 sm:px-6 py-1.5 sm:py-2 bg-orange-50 border border-orange-200 rounded-full text-orange-600 font-black shadow-sm">
+                        <Flame size={18} className="animate-bounce sm:w-5 sm:h-5" />
+                        <span className="text-sm sm:text-lg">{streak} COMBO!</span>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            <div className="flex gap-12">
-                {[ 
-                    {l: '学习中', v: stats.learning, c: 'text-indigo-500'}, 
-                    {l: '已掌握', v: stats.mastered, c: 'text-green-500'}, 
-                    {l: '总词汇', v: stats.total, c: 'text-gray-400'} 
+            {/* 词汇统计 三列：移动端隐藏中间两项，仅在 sm+ 显示学习中/已掌握；总词汇标签已在单元名下显示 */}
+            <div className="hidden sm:flex gap-6 md:gap-10 lg:gap-12">
+                {[
+                    {l: '学习中', v: stats.learning, c: 'text-indigo-500'},
+                    {l: '已掌握', v: stats.mastered, c: 'text-green-500'},
+                    {l: '总词汇', v: stats.total, c: 'text-gray-400', hideOnMd: true}
                 ].map(s => (
-                    <div key={s.l} className="text-center group">
+                    <div key={s.l} className={`text-center group ${s.hideOnMd ? 'hidden lg:block' : ''}`}>
                         <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest mb-1 group-hover:text-gray-400 transition-colors">{s.l}</div>
-                        <div className={`text-3xl font-black tabular-nums ${s.c}`}>{s.v}</div>
+                        <div className={`text-2xl md:text-3xl font-black tabular-nums ${s.c}`}>{s.v}</div>
                     </div>
                 ))}
             </div>
-            <div className="h-12 w-px bg-gray-100"></div>
-            
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={onReset} 
-                className="p-3.5 rounded-2xl transition-all text-gray-400 hover:text-red-500 hover:bg-red-50 active:scale-95"
+            <div className="hidden md:block h-12 w-px bg-gray-100"></div>
+
+            <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+              <button
+                onClick={onReset}
+                className="p-2 sm:p-3 md:p-3.5 rounded-2xl transition-all text-gray-400 hover:text-red-500 hover:bg-red-50 active:scale-95"
                 title="重置本单元进度 (需要授权)"
               >
-                  <RotateCw size={24} />
+                  <RotateCw className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
 
-              <div className="h-8 w-px bg-gray-100"></div>
+              <div className="hidden sm:block h-8 w-px bg-gray-100"></div>
 
               {loading ? (
                 <div className="w-10 h-10 rounded-full bg-gray-100 animate-pulse"></div>
@@ -113,17 +114,17 @@ const Header: React.FC<HeaderProps> = ({
                 <div className="relative" ref={menuRef}>
                   <button
                     onClick={() => setMenuOpen(o => !o)}
-                    className="flex items-center gap-3 group focus:outline-none"
+                    className="flex items-center gap-2 sm:gap-3 group focus:outline-none"
                     title="账号菜单"
                   >
-                    <div className="flex flex-col items-end">
+                    <div className="hidden md:flex flex-col items-end">
                       <span className="text-xs font-black text-gray-900 truncate max-w-[100px]">{user.displayName || '用户'}</span>
                       <span className="text-[10px] font-black text-gray-400 group-hover:text-indigo-500 uppercase tracking-widest transition-colors">账号菜单</span>
                     </div>
                     {user.photoURL ? (
-                      <img src={user.photoURL} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-indigo-100 shadow-sm group-hover:border-indigo-300 transition-colors" referrerPolicy="no-referrer" />
+                      <img src={user.photoURL} alt="Avatar" className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-indigo-100 shadow-sm group-hover:border-indigo-300 transition-colors" referrerPolicy="no-referrer" />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border-2 border-indigo-200 group-hover:border-indigo-400 transition-colors">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border-2 border-indigo-200 group-hover:border-indigo-400 transition-colors">
                         <UserIcon size={20} />
                       </div>
                     )}
@@ -160,11 +161,11 @@ const Header: React.FC<HeaderProps> = ({
                   </AnimatePresence>
                 </div>
               ) : (
-                <button 
+                <button
                   onClick={signIn}
-                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-black text-xs transition-all shadow-lg shadow-indigo-100 active:scale-95"
+                  className="flex items-center gap-1.5 sm:gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-[11px] sm:text-xs transition-all shadow-lg shadow-indigo-100 active:scale-95"
                 >
-                  <LogIn size={16} />
+                  <LogIn size={14} className="sm:w-4 sm:h-4" />
                   登录同步
                 </button>
               )}

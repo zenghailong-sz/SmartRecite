@@ -66,14 +66,14 @@ const DashboardModal: React.FC<DashboardModalProps> = ({ isOpen, onClose, units,
   }, [isOpen, units]);
 
   const StatCard = ({ label, value, icon, color, subText }: any) => (
-    <div className={`p-6 rounded-3xl border border-white/50 shadow-lg ${color} relative overflow-hidden group`}>
+    <div className={`p-4 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl border border-white/50 shadow-lg ${color} relative overflow-hidden group`}>
         <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-2 opacity-80">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 opacity-80">
                 {icon}
-                <span className="text-xs font-black uppercase tracking-widest">{label}</span>
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest">{label}</span>
             </div>
-            <div className="text-4xl font-black tracking-tight">{value}</div>
-            {subText && <div className="text-xs font-bold mt-2 opacity-60">{subText}</div>}
+            <div className="text-3xl sm:text-4xl font-black tracking-tight">{value}</div>
+            {subText && <div className="text-[10px] sm:text-xs font-bold mt-2 opacity-60">{subText}</div>}
         </div>
         <div className="absolute -right-4 -bottom-4 opacity-10 scale-150 group-hover:scale-125 transition-transform duration-500">
             {icon}
@@ -91,26 +91,26 @@ const DashboardModal: React.FC<DashboardModalProps> = ({ isOpen, onClose, units,
           className="fixed inset-0 z-[200] bg-gray-100/90 backdrop-blur-xl flex flex-col"
         >
            {/* Header Area */}
-           <div className="px-10 py-8 flex justify-between items-center bg-white border-b border-gray-200 shadow-sm z-20">
-              <div className="flex items-center gap-6">
-                <div className="bg-indigo-600 p-4 rounded-3xl text-white shadow-xl shadow-indigo-100">
-                  <BarChart3 size={32} />
+           <div className="px-4 sm:px-6 md:px-10 py-5 sm:py-6 md:py-8 flex justify-between items-center bg-white border-b border-gray-200 shadow-sm z-20">
+              <div className="flex items-center gap-3 sm:gap-5 md:gap-6">
+                <div className="bg-indigo-600 p-3 sm:p-4 rounded-2xl sm:rounded-3xl text-white shadow-xl shadow-indigo-100">
+                  <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-black text-gray-900 tracking-tight">学习全景仪表盘</h2>
-                  <p className="text-xs text-indigo-500 font-bold tracking-widest uppercase mt-1">Global Progress Dashboard</p>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-gray-900 tracking-tight">学习全景仪表盘</h2>
+                  <p className="text-[10px] sm:text-xs text-indigo-500 font-bold tracking-widest uppercase mt-1">Global Progress Dashboard</p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-4 bg-gray-50 hover:bg-white rounded-2xl text-gray-400 hover:text-red-500 border border-transparent hover:border-gray-200 transition-all shadow-sm">
+              <button onClick={onClose} className="p-3 sm:p-4 bg-gray-50 hover:bg-white rounded-2xl text-gray-400 hover:text-red-500 border border-transparent hover:border-gray-200 transition-all shadow-sm">
                 <X size={24}/>
               </button>
            </div>
 
-           <div className="flex-1 overflow-y-auto p-10">
-              <div className="max-w-6xl mx-auto space-y-12">
-                  
+           <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10">
+              <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 md:space-y-12">
+
                   {/* Top Stats Grid (3 Columns now) */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
                       <StatCard 
                         label="正在学习中" 
                         value={globalStats.totalLearning} 
@@ -146,10 +146,10 @@ const DashboardModal: React.FC<DashboardModalProps> = ({ isOpen, onClose, units,
                             const isStarted = unit.learning > 0 || unit.mastered > 0;
 
                             return (
-                                <button 
+                                <button
                                     key={unit.id}
                                     onClick={() => { onSelectUnit(unit.id); onClose(); }}
-                                    className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all flex items-center gap-8 group text-left relative overflow-hidden"
+                                    className="bg-white p-4 sm:p-5 md:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all flex items-center gap-3 sm:gap-5 md:gap-8 group text-left relative overflow-hidden flex-wrap sm:flex-nowrap"
                                 >
                                     {/* Completion Gradient Background */}
                                     <div className="absolute bottom-0 left-0 h-1 bg-gray-100 w-full">
@@ -157,12 +157,12 @@ const DashboardModal: React.FC<DashboardModalProps> = ({ isOpen, onClose, units,
                                     </div>
 
                                     {/* Unit Info */}
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <h4 className="text-lg font-black text-gray-900 group-hover:text-indigo-600 transition-colors">{unit.name}</h4>
-                                            {isCompleted && <CheckCircle2 size={16} className="text-green-500" />}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-3 mb-1 sm:mb-2">
+                                            <h4 className="text-base sm:text-lg font-black text-gray-900 group-hover:text-indigo-600 transition-colors truncate">{unit.name}</h4>
+                                            {isCompleted && <CheckCircle2 size={16} className="text-green-500 shrink-0" />}
                                         </div>
-                                        <div className="flex items-center gap-4 text-xs font-bold text-gray-400">
+                                        <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs font-bold text-gray-400">
                                             <span>{unit.total} WORDS</span>
                                             {unit.lastActivity > 0 && (
                                                 <span className="flex items-center gap-1 text-gray-300">
@@ -173,19 +173,19 @@ const DashboardModal: React.FC<DashboardModalProps> = ({ isOpen, onClose, units,
                                     </div>
 
                                     {/* Progress Stats */}
-                                    <div className="flex items-center gap-8 mr-8">
+                                    <div className="flex items-center gap-5 sm:gap-6 md:gap-8 mr-4 sm:mr-6 md:mr-8 shrink-0">
                                          <div className="text-center">
                                             <div className="text-[10px] font-black text-gray-300 uppercase mb-1">MASTERED</div>
-                                            <div className="text-xl font-black text-green-500">{unit.mastered}</div>
+                                            <div className="text-lg sm:text-xl font-black text-green-500">{unit.mastered}</div>
                                          </div>
                                          <div className="text-center">
                                             <div className="text-[10px] font-black text-gray-300 uppercase mb-1">LEARNING</div>
-                                            <div className="text-xl font-black text-indigo-500">{unit.learning}</div>
+                                            <div className="text-lg sm:text-xl font-black text-indigo-500">{unit.learning}</div>
                                          </div>
                                     </div>
 
                                     {/* Simple Status Badge */}
-                                    <div className="flex items-center gap-6">
+                                    <div className="flex items-center gap-3 sm:gap-5 md:gap-6 shrink-0">
                                         {isCompleted ? (
                                             <div className="px-5 py-2 bg-green-50 text-green-600 rounded-xl font-black text-[10px] tracking-widest uppercase border border-green-100">
                                                 Done
@@ -211,12 +211,12 @@ const DashboardModal: React.FC<DashboardModalProps> = ({ isOpen, onClose, units,
                   </div>
 
                   {/* DEVELOPER TOOLS SECTION */}
-                  <div className="pt-8 border-t border-gray-200">
-                    <h3 className="text-xl font-black text-gray-400 mb-6 flex items-center gap-2 uppercase tracking-widest text-[11px]">
+                  <div className="pt-5 sm:pt-6 md:pt-8 border-t border-gray-200">
+                    <h3 className="text-lg sm:text-xl font-black text-gray-400 mb-4 sm:mb-6 flex items-center gap-2 uppercase tracking-widest text-[11px]">
                         {isLocked ? <Lock size={14} className="text-gray-300"/> : <Clock size={14}/>} Time Machine (Developer Tools)
                     </h3>
-                    <div className={`bg-gray-50 p-6 rounded-[2rem] border border-gray-100 transition-all ${isLocked ? 'opacity-70 grayscale-[0.5]' : ''}`}>
-                       <p className="text-xs text-gray-500 font-medium mb-4">
+                    <div className={`bg-gray-50 p-4 sm:p-5 md:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-gray-100 transition-all ${isLocked ? 'opacity-70 grayscale-[0.5]' : ''}`}>
+                       <p className="text-[11px] sm:text-xs text-gray-500 font-medium mb-4">
                          Simulate time passing to test Spaced Repetition logic. <br/>
                          This moves the "Next Review" deadlines of all cards into the past.
                        </p>

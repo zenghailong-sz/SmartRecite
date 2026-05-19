@@ -25,14 +25,16 @@ const getPOSStyle = (pos: string) => {
 };
 
 const getDynamicFontSize = (text: string, isChinese: boolean) => {
+    // 移动端整体降一档：以 base / sm 断点同时声明。
     if (isChinese) {
-        return text.length > 10 ? 'text-4xl' : 'text-5xl';
+        return text.length > 10
+            ? 'text-2xl sm:text-3xl md:text-4xl'
+            : 'text-3xl sm:text-4xl md:text-5xl';
     } else {
-        // "intelligently" is 13 chars -> text-5xl
-        // "hesitate" is 8 chars -> text-6xl
-        if (text.length > 16) return 'text-4xl';
-        if (text.length > 10) return 'text-5xl'; 
-        return 'text-6xl';
+        // "intelligently" 13 字符 -> 5xl, "hesitate" 8 字符 -> 6xl，移动端各下降两档以避免溢出。
+        if (text.length > 16) return 'text-2xl sm:text-3xl md:text-4xl';
+        if (text.length > 10) return 'text-3xl sm:text-4xl md:text-5xl';
+        return 'text-4xl sm:text-5xl md:text-6xl';
     }
 };
 
@@ -144,7 +146,7 @@ const SpellCard = memo(({ data, onAnswer, onComplete, direction, isVisible }: Fl
     if (!data) return null;
 
     return (
-        <div className="relative w-full h-full bg-white rounded-[3.5rem] shadow-2xl border border-gray-100 flex flex-col items-center p-10 overflow-hidden">
+        <div className="relative w-full h-full bg-white rounded-[2rem] sm:rounded-[3rem] md:rounded-[3.5rem] shadow-2xl border border-gray-100 flex flex-col items-center p-4 sm:p-6 md:p-10 overflow-hidden">
             <div className="w-full flex justify-between items-center mb-4">
                 <span className={`text-[10px] font-black px-4 py-2 rounded-xl uppercase tracking-widest ${data.type === CardType.WORD ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
                     {data.type === CardType.WORD ? 'SPELL' : 'PHRASE'}
@@ -154,11 +156,11 @@ const SpellCard = memo(({ data, onAnswer, onComplete, direction, isVisible }: Fl
 
             <div className="flex-1 flex flex-col justify-center items-center w-full relative">
                 {/* Chinese Hint */}
-                <h3 className={`font-black text-gray-900 text-center mb-6 tracking-tight leading-tight ${getDynamicFontSize(data.back, true)}`}>
+                <h3 className={`font-black text-gray-900 text-center mb-3 sm:mb-6 tracking-tight leading-tight ${getDynamicFontSize(data.back, true)}`}>
                     {data.back}
                 </h3>
-                
-                <div className="flex gap-3 mb-6">
+
+                <div className="flex gap-3 mb-3 sm:mb-6">
                     {data.pos && (
                         <div className={`px-3 py-1.5 rounded-lg border-2 text-sm font-black transform -rotate-2 ${getPOSStyle(data.pos)}`}>
                             {data.pos}
@@ -185,7 +187,7 @@ const SpellCard = memo(({ data, onAnswer, onComplete, direction, isVisible }: Fl
                         disabled={spellStatus === 'error'}
                         placeholder={attempts > 0 ? "Try again..." : ""}
                         animate={controls}
-                        className={`w-full text-center text-3xl p-5 border-4 rounded-[2rem] outline-none font-black tracking-tight shadow-sm placeholder:text-red-300/50 transition-colors duration-75 ${
+                        className={`w-full text-center text-xl sm:text-2xl md:text-3xl p-3 sm:p-4 md:p-5 border-4 rounded-[1.5rem] sm:rounded-[2rem] outline-none font-black tracking-tight shadow-sm placeholder:text-red-300/50 transition-colors duration-75 ${
                             spellStatus === 'success' ? 'border-green-500 text-green-700 bg-green-50/50 shadow-green-100' :
                             spellStatus === 'error' ? 'border-red-500 text-red-700 bg-red-50/50 shadow-red-100' :
                             attempts > 0 ? 'border-orange-300 text-orange-600 bg-orange-50/30 focus:border-orange-400' :
@@ -258,59 +260,59 @@ const ReadCard = memo(({ data, isFlipped, onFlip, direction }: FlashcardProps) =
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
         >
             {/* FRONT */}
-            <div className="absolute w-full h-full backface-hidden bg-white rounded-[3.5rem] border border-gray-100 flex flex-col items-center justify-center p-14 group-hover:border-indigo-100 transition-colors">
-                <div className="absolute top-10 left-10 flex items-center gap-4">
-                    <span className={`text-[10px] font-black px-4 py-2 rounded-xl uppercase tracking-widest ${data.type === CardType.WORD ? 'bg-indigo-50 text-indigo-600' : 'bg-purple-50 text-purple-600'}`}>
+            <div className="absolute w-full h-full backface-hidden bg-white rounded-[2rem] sm:rounded-[3rem] md:rounded-[3.5rem] border border-gray-100 flex flex-col items-center justify-center p-5 sm:p-10 md:p-14 group-hover:border-indigo-100 transition-colors">
+                <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-10 md:left-10 flex items-center gap-2 sm:gap-4">
+                    <span className={`text-[10px] font-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl uppercase tracking-widest ${data.type === CardType.WORD ? 'bg-indigo-50 text-indigo-600' : 'bg-purple-50 text-purple-600'}`}>
                         {isEnToZh ? (data.type === CardType.WORD ? 'WORD' : 'PHRASE') : 'MEANING'}
                     </span>
                     {renderMemoryBars(data.level)}
                 </div>
-                
+
                 {isEnToZh && (
-                    <button className="absolute top-10 right-10 text-gray-300 hover:text-indigo-600 p-4 rounded-2xl hover:bg-indigo-50 transition-all group/speak" onClick={handleSpeak}>
-                        <Volume2 size={36} className="group-hover/speak:scale-110 transition-transform" />
+                    <button className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-10 md:right-10 text-gray-300 hover:text-indigo-600 p-2 sm:p-3 md:p-4 rounded-2xl hover:bg-indigo-50 transition-all group/speak" onClick={handleSpeak}>
+                        <Volume2 className="group-hover/speak:scale-110 transition-transform w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9" />
                     </button>
                 )}
 
                 <div className="flex-1 flex flex-col items-center justify-center w-full">
                     {isEnToZh && data.pos && (
-                        <div className={`px-4 py-1.5 rounded-xl border-2 text-lg font-black mb-6 shadow-sm transform -rotate-1 ${getPOSStyle(data.pos)}`}>
+                        <div className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-xl border-2 text-sm sm:text-base md:text-lg font-black mb-3 sm:mb-6 shadow-sm transform -rotate-1 ${getPOSStyle(data.pos)}`}>
                             {data.pos}
                         </div>
                     )}
 
-                    {/* Main Text with Dynamic Size and Wrapping */}
-                    <h2 className={`font-black text-gray-900 text-center leading-tight tracking-tight px-8 break-words max-w-full ${fontSizeClass}`}>
+                    {/* 主文本，按字符长度 + 断点动态缩放 */}
+                    <h2 className={`font-black text-gray-900 text-center leading-tight tracking-tight px-2 sm:px-6 md:px-8 break-words max-w-full ${fontSizeClass}`}>
                         {currentText}
                     </h2>
                 </div>
-                
-                <div className="absolute bottom-10 flex flex-col items-center gap-3">
-                    <div className="h-1 w-12 bg-gray-100 rounded-full"></div>
-                    <p className="text-gray-300 text-[10px] font-black tracking-[0.3em] uppercase opacity-40 animate-pulse">Click to Reveal</p>
+
+                <div className="absolute bottom-4 sm:bottom-6 md:bottom-10 flex flex-col items-center gap-2 sm:gap-3">
+                    <div className="h-1 w-10 sm:w-12 bg-gray-100 rounded-full"></div>
+                    <p className="text-gray-300 text-[9px] sm:text-[10px] font-black tracking-[0.3em] uppercase opacity-40 animate-pulse">Click to Reveal</p>
                 </div>
             </div>
 
             {/* BACK */}
-            <div className="absolute w-full h-full backface-hidden bg-gradient-to-br from-indigo-600 to-indigo-900 rounded-[3.5rem] flex flex-col items-center justify-center p-14 rotate-y-180 shadow-inner">
-                <div className="absolute top-10 left-10 text-indigo-300/60 text-[10px] font-black tracking-[0.2em] uppercase">
+            <div className="absolute w-full h-full backface-hidden bg-gradient-to-br from-indigo-600 to-indigo-900 rounded-[2rem] sm:rounded-[3rem] md:rounded-[3.5rem] flex flex-col items-center justify-center p-5 sm:p-10 md:p-14 rotate-y-180 shadow-inner">
+                <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-10 md:left-10 text-indigo-300/60 text-[10px] font-black tracking-[0.2em] uppercase">
                     {isEnToZh ? 'CHINESE TRANSLATION' : (data.type === CardType.WORD ? 'ENGLISH WORD' : 'PHRASE')}
                 </div>
-                
+
                 {!isEnToZh && (
-                    <button className="absolute top-10 right-10 text-indigo-300 hover:text-white p-4 rounded-2xl hover:bg-white/10 transition-all group/speak" onClick={handleSpeak}>
-                        <Volume2 size={36} className="group-hover/speak:scale-110 transition-transform" />
+                    <button className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-10 md:right-10 text-indigo-300 hover:text-white p-2 sm:p-3 md:p-4 rounded-2xl hover:bg-white/10 transition-all group/speak" onClick={handleSpeak}>
+                        <Volume2 className="group-hover/speak:scale-110 transition-transform w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9" />
                     </button>
                 )}
-                
+
                 <div className="flex-1 flex flex-col items-center justify-center w-full">
                     {!isEnToZh && data.pos && (
-                        <div className={`px-4 py-1.5 rounded-xl border-2 text-lg font-black mb-6 shadow-lg transform -rotate-1 ${getPOSStyle(data.pos)}`}>
+                        <div className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-xl border-2 text-sm sm:text-base md:text-lg font-black mb-3 sm:mb-6 shadow-lg transform -rotate-1 ${getPOSStyle(data.pos)}`}>
                             {data.pos}
                         </div>
                     )}
 
-                    <h3 className={`font-black text-white text-center leading-tight tracking-tight px-8 break-words max-w-full ${getDynamicFontSize(isEnToZh ? data.back : data.front, isEnToZh)}`}>
+                    <h3 className={`font-black text-white text-center leading-tight tracking-tight px-2 sm:px-6 md:px-8 break-words max-w-full ${getDynamicFontSize(isEnToZh ? data.back : data.front, isEnToZh)}`}>
                         {isEnToZh ? data.back : data.front}
                     </h3>
                 </div>
@@ -325,9 +327,9 @@ const Flashcard: React.FC<FlashcardProps> = (props) => {
     const isSpellMode = props.mode === 'spell';
 
     return (
-        // Wrapper sets fixed dimensions and 3D context.
-        // Fixed height h-[420px] matches the original card aesthetic while fitting SpellCard content tightly.
-        <div className="relative w-[600px] h-[420px] mx-auto perspective-1000 group">
+        // 宽度上限保留原 600px 桌面美学，移动端塞满父容器；
+        // 用 aspect-[10/7] 保持原 600x420 的比例，避免高度写死导致移动端溢出。
+        <div className="relative w-full max-w-[600px] aspect-[10/7] mx-auto perspective-1000 group">
              {/* Read Card Layer */}
              <div className={isSpellMode ? 'hidden' : 'block h-full'}>
                 <ReadCard {...props} />

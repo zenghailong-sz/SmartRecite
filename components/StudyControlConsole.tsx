@@ -53,34 +53,34 @@ const StudyControlConsole: React.FC<StudyControlConsoleProps> = ({
 }) => {
   return (
     <div className={`transition-all duration-500 ${viewMode === 'card' ? 'opacity-100' : 'opacity-100 mb-8'}`}>
-      <div className={`p-10 rounded-[3rem] shadow-sm border transition-all duration-300 relative overflow-hidden ${cramMode ? 'bg-orange-50 border-orange-200 shadow-orange-100' : 'bg-white border-gray-100'}`}>
+      <div className={`p-4 sm:p-6 md:p-10 rounded-[2rem] sm:rounded-[2.5rem] md:rounded-[3rem] shadow-sm border transition-all duration-300 relative overflow-hidden ${cramMode ? 'bg-orange-50 border-orange-200 shadow-orange-100' : 'bg-white border-gray-100'}`}>
         {cramMode && (
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
             <Flame size={200} className="text-orange-500" />
           </div>
         )}
 
-        <div className={`flex items-center justify-between ${viewMode === 'card' ? 'mb-10 border-b pb-8' : ''} ${cramMode ? 'border-orange-200' : 'border-gray-50'}`}>
-          <h2 className={`text-xl font-black flex items-center gap-4 ${cramMode ? 'text-orange-700' : 'text-gray-900'}`}>
-            <div className={`w-2.5 h-10 rounded-full shadow-lg ${cramMode ? 'bg-orange-500 shadow-orange-200' : 'bg-indigo-600 shadow-indigo-100'}`}></div>
+        <div className={`flex flex-wrap items-center justify-between gap-3 ${viewMode === 'card' ? 'mb-5 sm:mb-7 md:mb-10 border-b pb-4 sm:pb-6 md:pb-8' : ''} ${cramMode ? 'border-orange-200' : 'border-gray-50'}`}>
+          <h2 className={`text-base sm:text-lg md:text-xl font-black flex items-center gap-3 sm:gap-4 ${cramMode ? 'text-orange-700' : 'text-gray-900'}`}>
+            <div className={`w-2 sm:w-2.5 h-8 sm:h-10 rounded-full shadow-lg ${cramMode ? 'bg-orange-500 shadow-orange-200' : 'bg-indigo-600 shadow-indigo-100'}`}></div>
             {cramMode ? '突击冲刺模式' : '学习控制台'}
           </h2>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-wrap">
             {viewMode === 'card' && (
               <button
                 onClick={onCramToggle}
-                className={`flex items-center gap-2 px-5 py-3 rounded-2xl border-2 font-black text-xs uppercase tracking-wider transition-all shadow-sm ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-2xl border-2 font-black text-[10px] sm:text-xs uppercase tracking-wider transition-all shadow-sm ${
                   cramMode
                     ? 'bg-orange-500 border-orange-500 text-white shadow-orange-200 hover:bg-orange-600 scale-105'
                     : 'bg-white border-gray-200 text-gray-400 hover:border-orange-300 hover:text-orange-500'
                 }`}
               >
-                {cramMode ? <Zap size={16} fill="currentColor" /> : (isLocked ? <Lock size={16} /> : <Flame size={16} />)}
-                {cramMode ? '考前突击 ON' : '考前突击 OFF'}
+                {cramMode ? <Zap size={14} fill="currentColor" /> : (isLocked ? <Lock size={14} /> : <Flame size={14} />)}
+                <span>{cramMode ? '突击 ON' : '突击 OFF'}</span>
               </button>
             )}
 
-            <div className="w-64">
+            <div className="w-44 sm:w-56 md:w-64">
               <SegmentedControl<ViewMode>
                 value={viewMode}
                 onChange={onViewModeChange}
@@ -94,7 +94,7 @@ const StudyControlConsole: React.FC<StudyControlConsoleProps> = ({
         </div>
 
         {viewMode === 'card' && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 sm:gap-6 md:gap-10 relative z-10">
             <div className="space-y-4">
               <label className={`text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 ml-1 ${cramMode ? 'text-orange-400' : 'text-gray-400'}`}>
                 <Layers size={12} /> 内容筛选
