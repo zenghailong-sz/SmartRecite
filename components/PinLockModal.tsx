@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, X, AlertCircle, KeyRound, ShieldCheck } from 'lucide-react';
 import { playGameSound } from '../utils/media';
@@ -49,19 +49,23 @@ const PinLockModal: React.FC<PinLockModalProps> = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const currentStep = steps[stepIndex];
-  const copy = STEP_COPY[currentStep];
+  // 打开 / 模式切换时同步重置：必须在 render 阶段执行，不能放 useEffect。
+  // 原因：effect 在渲染后才跑，change 流程结束时 stepIndex=2，紧接着切到 verify
+  // （steps 只剩 1 项）时，第一次渲染会用 steps[2]=undefined 取 copy，触发 crash。
+  const resetKey = `${isOpen ? 'o' : 'c'}-${mode}`;
+  const [prevResetKey, setPrevResetKey] = useState(resetKey);
+  if (prevResetKey !== resetKey) {
+    setPrevResetKey(resetKey);
+    setStepIndex(0);
+    setPin('');
+    setNewPinBuffer('');
+    setErrorMsg(null);
+    setSaving(false);
+  }
 
-  // 打开 / 模式切换时重置所有内部状态
-  useEffect(() => {
-    if (isOpen) {
-      setStepIndex(0);
-      setPin('');
-      setNewPinBuffer('');
-      setErrorMsg(null);
-      setSaving(false);
-    }
-  }, [isOpen, mode]);
+  // 双保险：即便未来再出现 stepIndex 越界，也优雅 fallback 到首步，避免白屏
+  const currentStep = steps[stepIndex] ?? steps[0];
+  const copy = STEP_COPY[currentStep];
 
   const handleStepError = (msg: string) => {
     playGameSound('wrong');
