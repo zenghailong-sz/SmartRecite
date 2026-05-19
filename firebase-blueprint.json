@@ -1,0 +1,69 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user-specific settings and metadata.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user's unique ID." },
+        "pin": { "type": "string", "description": "The user's security PIN (hashed or plain for this demo)." },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "autoPlay": { "type": "boolean" },
+            "studyMode": { "type": "string", "enum": ["read", "spell"] },
+            "viewMode": { "type": "string", "enum": ["card", "list"] },
+            "flipDirection": { "type": "string", "enum": ["en-zh", "zh-en"] }
+          }
+        },
+        "lastSync": { "type": "integer", "description": "Timestamp of last sync." }
+      },
+      "required": ["uid"]
+    },
+    "Unit": {
+      "title": "Study Unit",
+      "description": "A collection of flashcards.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "count": { "type": "integer" },
+        "masteredCount": { "type": "integer", "description": "Number of cards at level 5." },
+        "learningCount": { "type": "integer", "description": "Number of cards at level < 5." },
+        "createdAt": { "type": "integer" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["id", "name", "ownerId"]
+    },
+    "Flashcard": {
+      "title": "Flashcard",
+      "description": "A single flashcard data point.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "front": { "type": "string" },
+        "back": { "type": "string" },
+        "pos": { "type": "string" },
+        "type": { "type": "string", "enum": ["WORD", "PHRASE"] },
+        "level": { "type": "integer" },
+        "nextReview": { "type": "integer" },
+        "lastReviewed": { "type": "integer" }
+      },
+      "required": ["id", "front", "back", "type"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile and settings."
+    },
+    "/users/{userId}/units/{unitId}": {
+      "schema": "Unit",
+      "description": "Units owned by the user."
+    },
+    "/users/{userId}/units/{unitId}/cards/{cardId}": {
+      "schema": "Flashcard",
+      "description": "Flashcards within a unit."
+    }
+  }
+}

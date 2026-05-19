@@ -1,0 +1,110 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: /users/{userId}
+    // Fields:
+    //   - uid: string (required)
+    //   - pin: string (optional)
+    //   - settings: map (optional)
+    //   - lastSync: integer (optional)
+    //
+    // Collection: /users/{userId}/units/{unitId}
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required)
+    //   - count: integer (required)
+    //   - createdAt: integer (required)
+    //   - ownerId: string (required)
+    //
+    // Collection: /users/{userId}/units/{unitId}/cards/{cardId}
+    // Fields:
+    //   - id: string (required)
+    //   - front: string (required)
+    //   - back: string (required)
+    //   - pos: string (optional)
+    //   - type: string (required, enum: ['WORD', 'PHRASE', 'SENTENCE'])
+    //   - level: integer (required)
+    //   - nextReview: integer (required)
+    //   - lastReviewed: integer (optional)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'lastSync']) &&
+             data.uid is string &&
+             data.uid == request.auth.uid &&
+             data.lastSync is int &&
+             // email 在 Google 登录里通常存在，但保留 null 兼容性
+             (!('email' in data) || data.email == null || data.email is string) &&
+             // createdAt 是 serverTimestamp()，到达 Firestore 后是 timestamp
+             (!('createdAt' in data) || data.createdAt is timestamp) &&
+             // 蓝图中 settings/pin 是可选扩展位，存在则类型必须正确
+             (!('pin' in data) || data.pin is string) &&
+             (!('settings' in data) || data.settings is map);
+    }
+
+    function isValidUnit(data) {
+      return data.keys().hasAll(['id', 'name', 'count', 'createdAt', 'ownerId']) &&
+             data.id is string &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.count is int &&
+             data.createdAt is int &&
+             data.ownerId is string &&
+             data.ownerId == request.auth.uid;
+    }
+
+    function isValidCard(data) {
+      return data.keys().hasAll(['id', 'front', 'back', 'type', 'level', 'nextReview']) &&
+             data.id is string &&
+             data.front is string && data.front.size() > 0 && data.front.size() < 500 &&
+             data.back is string && data.back.size() > 0 && data.back.size() < 1000 &&
+             data.type in ['WORD', 'PHRASE', 'SENTENCE'] &&
+             data.level is int && data.level >= 0 && data.level <= 5 &&
+             data.nextReview is int;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+      
+      match /units/{unitId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidUnit(request.resource.data);
+        allow update: if isOwner(userId) && isValidUnit(request.resource.data);
+        allow delete: if isOwner(userId);
+
+        match /cards/{cardId} {
+          allow read: if isOwner(userId);
+          allow create: if isOwner(userId) && isValidCard(request.resource.data);
+          allow update: if isOwner(userId) && isValidCard(request.resource.data);
+          allow delete: if isOwner(userId);
+        }
+      }
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
