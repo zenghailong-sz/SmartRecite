@@ -88,13 +88,16 @@ export default function App() {
   const lastPlayedCardId = useRef<string | null>(null);
 
   // Auth Hook
-  const { 
-    isLocked, 
-    requireAuth, 
-    authModalOpen, 
-    closeAuthModal, 
-    onAuthSuccess, 
-    verifyPin, 
+  const {
+    isLocked,
+    requireAuth,
+    authModalOpen,
+    modalMode,
+    closeAuthModal,
+    onAuthSuccess,
+    verifyPin,
+    savePin,
+    openChangePin,
   } = usePinAuth();
 
   const { user, isAuthReady } = useFirebase();
@@ -682,6 +685,7 @@ export default function App() {
         onOpenGuide={() => { playGameSound('click'); setShowInfoModal(true); }}
         onOpenDashboard={() => { playGameSound('click'); setShowDashboard(true); }}
         onReset={handleProtectedReset}
+        onChangePin={openChangePin}
         isLocked={isLocked}
         onToggleLock={() => {}}
       />
@@ -766,11 +770,13 @@ export default function App() {
         )}
       </main>
 
-      <PinLockModal 
+      <PinLockModal
         isOpen={authModalOpen}
+        mode={modalMode}
         onClose={closeAuthModal}
         onSuccess={onAuthSuccess}
         verifyPin={verifyPin}
+        savePin={savePin}
       />
       <StudyGuideModal isOpen={showInfoModal} onClose={() => setShowInfoModal(false)} />
       <DashboardModal 

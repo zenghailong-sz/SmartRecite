@@ -48,7 +48,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 自动朗读防双播：`lastPlayedCardId` ref + 100ms 防抖；切卡过快时 cleanup 会清掉 timeout。
 
 ### PIN 保护机制
-- `hooks/usePinAuth.ts`：硬编码 `ADMIN_PIN = '1897'`。**不是登录密码**，是"危险操作二次确认"——重置进度、删除单元、导入、考前突击切换、时间穿梭都走 `requireAuth(callback)`，弹 PIN 弹窗，验证通过后才执行回调。
+- `hooks/usePinAuth.ts`：PIN 从 Firestore `users/{uid}.pin` 读取，**每用户自设**，4 位数字。**不是登录密码**，是"危险操作二次确认"——重置进度、删除单元、导入、考前突击切换、时间穿梭都走 `requireAuth(callback)`，弹 PIN 弹窗，验证通过后才执行回调。
+- 三种弹窗模式（`modalMode`）：`verify` 校验、`setup` 强制首次设置（输两次新 PIN）、`change` 修改 PIN（旧→新→确认新）。`requireAuth` 时若未设置 PIN 会自动切到 `setup`；`openChangePin` 由 Header 头像菜单触发。
+- 落盘走 `savePin(newPin)`，写 `users/{uid}.pin` + 更新 `lastSync`。Firestore Rules 已校验 `pin is string`（可选字段）。
 - `isLocked` 始终为 `true`，仅作为 UI 上锁图标的视觉提示；授权是"一次性"的，不持久。
 
 ### 媒体能力
